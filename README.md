@@ -4,4 +4,4 @@
 
 ## Getting Started
 
-![](images/movie.mp4)
+![](https://github.com/DumitruIonut/currency_convertor/blob/main/images/movie.mp4)
