@@ -29,7 +29,7 @@ class _HomepageState extends State<Homepage> {
   String ronValue = '';
   String e = '';
   int? intIndex;
-  List currencyList = [];
+  List<Map<String, String>> currencyList = <Map<String, String>>[];
   double? currencyPrice;
 
   @override
@@ -38,9 +38,9 @@ class _HomepageState extends State<Homepage> {
     loadDataApi();
   }
 
-  Future<List> loadDataApi() async {
-    var items = await Api().getCurrency();
-    for (var i = 0; i < items.length; i++) {
+  Future<List<Map<String, String>>> loadDataApi() async {
+    final List<Map<String, String>> items = await Api().getCurrency();
+    for (int i = 0; i < items.length; i++) {
       currencyList.add(items[i]);
     }
     return items;
@@ -53,15 +53,12 @@ class _HomepageState extends State<Homepage> {
         body: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Center(
-                child: Image.network(
-                    'http://abrevierile.ro/i/bnr-banca-nationala-a-romaniei-logotip.jpg'),
+                child: Image.network('http://abrevierile.ro/i/bnr-banca-nationala-a-romaniei-logotip.jpg'),
               ),
               TextField(
-                keyboardType:
-                const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 controller: controller,
                 decoration: InputDecoration(
                   hintText: 'enter the amount to convert to lei',
@@ -88,22 +85,21 @@ class _HomepageState extends State<Homepage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  DropdownButton(
+                  DropdownButton<int>(
                     value: intIndex,
                     onChanged: (int? value) {
                       setState(() {
-                        intIndex = value!;
-                        currencyPrice =
-                            double.parse(currencyList[value]['price']);
+                        intIndex = value;
+                        currencyPrice = double.parse(currencyList[value!]['price']!);
                       });
                     },
                     items: currencyList
-                        .map((data) => DropdownMenuItem<int>(
-                      child: Text(data['name']),
-                      value: data['id'],
-                    ))
+                        .map((Map<String, String> data) => DropdownMenuItem<int>(
+                              value: int.tryParse(data['id'].toString()),
+                              child: Text(data['name'].toString()),
+                            ))
                         .toList(),
-                    hint: Text("Select currency"),
+                    hint: const Text('Select currency'),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -117,8 +113,7 @@ class _HomepageState extends State<Homepage> {
                           ronValue = '';
                         } else {
                           e = '';
-                          price = double.tryParse(controller.text)! *
-                              currencyPrice!;
+                          price = double.tryParse(controller.text)! * currencyPrice!;
                           ronValue = price!.toStringAsFixed(2);
                           ronValue += ' Lei';
                         }
@@ -145,7 +140,6 @@ class _HomepageState extends State<Homepage> {
                       )),
                 ],
               ),
-              // Expanded(child: Row()),
             ],
           ),
         ),
